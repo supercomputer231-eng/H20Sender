@@ -1,0 +1,79 @@
+================================================================
+                  AVAILABLE PLACEHOLDERS LIST
+================================================================
+
+1. BASIC PLACEHOLDERS (Main Ones)
+
+{RECIPIENT_NAME}                  → Recipient's cleaned name (e.g. John Smith)
+{RECIPIENT_EMAIL}                 → Full recipient email address
+{RECIPIENT_DOMAIN}                → Full domain (e.g. company.com)
+{RECIPIENT_DOMAIN_NAME}           → Clean domain name (e.g. Company)
+{RECIPIENT_REAL_COMPANY_NAME}     → Company name (e.g. Company Inc.)
+
+{CURRENT_DATE}                    → Current date (e.g. 4/19/2026)
+{CURRENT_TIME}                    → Current time (e.g. 02:45:30 PM)
+
+{RANDOM_NUMBER10}                 → Random 10-digit number
+{RANDOM_STRING}                   → Random long string (hex)
+{RANDOM_MD5}                      → Random MD5 hash
+{RECIPIENT_BASE64_EMAIL}          → Email encoded in Base64
+
+{FAKE_COMPANY}                    → Random fake company name
+{FAKE_COMPANY_EMAIL}              → Random fake company email
+{FAKE_COMPANY_EMAIL_AND_FULLNAME} → Fake company with email format
+
+{RANDLINK}                        → Random tracking/document link
+
+{VICTIMDOMAINLOGO}                → Full HTML <img> tag with company logo
+{VICTIMDOMAINLOGOSRC}             → Only the logo URL (for manual img tag)
+
+
+2. ADVANCED FUNCTIONS
+
+{url(ANY TEXT)}                   → URL encodes the text
+    Example: {ur[](https://site.com?id={RECIPIENT_EMAIL})}
+
+{base64(ANY TEXT)}                → Base64 encodes the text
+    Example: {base64({RECIPIENT_EMAIL})}
+
+{censor(EMAIL)}                   → Censors email (e.g. jo****@company.com)
+    Example: {censor({RECIPIENT_EMAIL})}
+
+{random(Option1|Option2|Option3)} → Randomly picks one option
+    Example: {random(Urgent|Important|Action Required)}
+
+{date}                            → Full current date & time
+{date8}                           → Date in DD/MM/YYYY format
+{date9}                           → Date in DD MMM YYYY format
+
+
+================================================================
+USAGE EXAMPLES
+================================================================
+
+Subject Line Examples:
+Important Document for {RECIPIENT_NAME} - {RECIPIENT_DOMAIN_NAME}
+{random(Urgent|Please Review|Action Required)} Document from {FAKE_COMPANY}
+
+From Name Examples:
+{FAKE_COMPANY} Official
+{RECIPIENT_DOMAIN_NAME} HR Team
+{RECIPIENT_REAL_COMPANY_NAME} Support
+
+Body Examples:
+Dear {RECIPIENT_NAME},
+
+Please review this document from {RECIPIENT_REAL_COMPANY_NAME}.
+
+{VICTIMDOMAINLOGO}
+
+View Secure Document: <a href="{RANDLINK}">Click Here</a>
+
+Encoded Email: {RECIPIENT_BASE64_EMAIL}
+Censored: {censor({RECIPIENT_EMAIL})}
+
+
+Notes:
+- All placeholders work in Subject, From Name, and Message Body.
+- Functions like {random()}, {base64()}, {censor()} also work everywhere.
+- {VICTIMDOMAINLOGO} automatically tries to fetch real company logo.
