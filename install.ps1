@@ -3,7 +3,7 @@
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
 Write-Host "===========================================" -ForegroundColor Cyan
-Write-Host "   H20 Email Sender - One-Click Installer" -ForegroundColor Cyan
+Write-Host "   H20 Email Sender - Full One-Click Installer" -ForegroundColor Cyan
 Write-Host "===========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -21,61 +21,55 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 
 Write-Host "✅ Node.js detected: $(node --version)" -ForegroundColor Green
 
-# Setup folder
+# Setup project folder
 $projectPath = "$env:USERPROFILE\Desktop\H20Sender"
 if (-not (Test-Path $projectPath)) {
     New-Item -ItemType Directory -Path $projectPath | Out-Null
 }
 Set-Location $projectPath
 
-Write-Host "`nDownloading core files..." -ForegroundColor Yellow
+Write-Host "`nDownloading ALL files from GitHub..." -ForegroundColor Yellow
 
 $base = "https://raw.githubusercontent.com/supercomputer231-eng/H20Sender/main"
 
-Invoke-WebRequest -Uri "$base/test.mjs"          -OutFile "test.mjs"          -UseBasicParsing
-Invoke-WebRequest -Uri "$base/placeholders.js"   -OutFile "placeholders.js"   -UseBasicParsing
+# Download all important files
+$files = @(
+    "test.mjs",
+    "placeholders.js",
+    "message.html",
+    "attachment.html",
+    "Leads.txt",
+    "fromname.txt",
+    "subject.txt",
+    "token.txt",
+    "install.ps1"
+)
 
-Write-Host "✅ Core files downloaded." -ForegroundColor Green
-
-# Create necessary .txt files if they don't exist
-Write-Host "`nCreating required .txt files..." -ForegroundColor Yellow
-
-if (-not (Test-Path "Leads.txt")) {
-    "example@email.com" | Out-File -FilePath "Leads.txt" -Encoding UTF8
-    Write-Host "Created Leads.txt (with example email)" -ForegroundColor Green
+foreach ($file in $files) {
+    try {
+        Invoke-WebRequest -Uri "$base/$file" -OutFile $file -UseBasicParsing -ErrorAction Stop
+        Write-Host "Downloaded: $file" -ForegroundColor Green
+    } catch {
+        Write-Host "Skipped (not found): $file" -ForegroundColor Yellow
+    }
 }
 
-if (-not (Test-Path "fromname.txt")) {
-    "DocuPay Official`nOfficial Support" | Out-File -FilePath "fromname.txt" -Encoding UTF8
-    Write-Host "Created fromname.txt" -ForegroundColor Green
-}
-
-if (-not (Test-Path "subject.txt")) {
-    "Important Document`nSettlement Notice" | Out-File -FilePath "subject.txt" -Encoding UTF8
-    Write-Host "Created subject.txt" -ForegroundColor Green
-}
-
-if (-not (Test-Path "token.txt")) {
-    "PUT_YOUR_TOKEN_HERE" | Out-File -FilePath "token.txt" -Encoding UTF8
-    Write-Host "Created token.txt (Please edit this with your real token)" -ForegroundColor Yellow
-}
-
-# Install packages
+# Install npm packages
 Write-Host "`nInstalling required packages..." -ForegroundColor Yellow
 npm install puppeteer qrcode p-limit nodemailer
 
 Write-Host "`n===========================================" -ForegroundColor Cyan
-Write-Host "✅ SETUP COMPLETED SUCCESSFULLY!" -ForegroundColor Green
+Write-Host "✅ FULL INSTALLATION COMPLETED!" -ForegroundColor Green
 Write-Host "===========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Project ready at: $projectPath" -ForegroundColor White
+Write-Host "Project Location: $projectPath" -ForegroundColor White
 Write-Host ""
 Write-Host "Next Steps:" -ForegroundColor Yellow
-Write-Host "1. Put your real token in token.txt" -ForegroundColor White
-Write-Host "2. Add your leads to Leads.txt" -ForegroundColor White
-Write-Host "3. Run: node test.mjs" -ForegroundColor White
+Write-Host "1. Edit token.txt with your real token" -ForegroundColor White
+Write-Host "2. Add your email leads to Leads.txt" -ForegroundColor White
+Write-Host "3. Run the sender: node test.mjs" -ForegroundColor White
 Write-Host ""
-Write-Host "Controls: P = Pause    R = Resume    Q = Quit" -ForegroundColor Yellow
+Write-Host "Controls: P = Pause    R = Resume    Q = Quit + Summary" -ForegroundColor Yellow
 Write-Host ""
 
 pause
