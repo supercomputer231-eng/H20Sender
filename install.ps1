@@ -7,35 +7,52 @@ Write-Host "   H20 Email Sender - One-Click Installer" -ForegroundColor Cyan
 Write-Host "===========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Auto install Node.js if missing (MSI method - more reliable)
+# Check Node.js
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-    Write-Host "Downloading & Installing Node.js LTS..." -ForegroundColor Yellow
+    Write-Host "Node.js not found. Installing..." -ForegroundColor Yellow
     $url = "https://nodejs.org/dist/v24.15.0/node-v24.15.0-x64.msi"
     $out = "$env:TEMP\node.msi"
-    Invoke-WebRequest -Uri $url -OutFile $out
-    Start-Process msiexec.exe -ArgumentList "/i `"$out`" /qn /norestart" -Wait
-    Write-Host "Node.js installed. Please close this window and run the installer again." -ForegroundColor Green
-    pause; exit
+    Invoke-WebRequest -Uri $url -OutFile $out -UseBasicParsing
+    Start-Process msiexec.exe -ArgumentList "/i `"$out`" /qn /norestart ADDLOCAL=ALL" -Wait
+    Write-Host "Node.js installed. Please CLOSE this window and run again." -ForegroundColor Green
+    pause
+    exit
 }
 
-# Create project folder
-$path = "$env:USERPROFILE\Desktop\H20Sender"
-if (-not (Test-Path $path)) { New-Item -ItemType Directory -Path $path | Out-Null }
-Set-Location $path
+Write-Host "✅ Node.js detected: $(node --version)" -ForegroundColor Green
 
-# Clone or download the repo
-Write-Host "Downloading sender files..." -ForegroundColor Yellow
-git clone https://github.com/YOUR_USERNAME/H20Sender.git . 2>$null
-if (-not $?) {
-    Invoke-WebRequest -Uri "https://github.com/YOUR_USERNAME/H20Sender/archive/refs/heads/main.zip" -OutFile "repo.zip"
-    Expand-Archive "repo.zip" -DestinationPath . -Force
-    Move-Item -Path "H20Sender-main\*" -Destination . -Force
+# Setup folder
+$projectPath = "$env:USERPROFILE\Desktop\H20Sender"
+if (-not (Test-Path $projectPath)) {
+    New-Item -ItemType Directory -Path $projectPath | Out-Null
 }
+Set-Location $projectPath
+
+Write-Host "`nDownloading project files..." -ForegroundColor Yellow
+
+# Direct download of all files from your repo (since it's public now)
+$base = "https://raw.githubusercontent.com/supercomputer231-eng/H20Sender/main"
+
+Invoke-WebRequest -Uri "$base/test.mjs"          -OutFile "test.mjs" -UseBasicParsing
+Invoke-WebRequest -Uri "$base/placeholders.js"   -OutFile "placeholders.js" -UseBasicParsing
+Invoke-WebRequest -Uri "$base/install.ps1"       -OutFile "install.ps1" -UseBasicParsing
+
+Write-Host "✅ Project files downloaded." -ForegroundColor Green
 
 # Install packages
+Write-Host "`nInstalling required packages..." -ForegroundColor Yellow
 npm install puppeteer qrcode p-limit nodemailer
 
-Write-Host "`n✅ Installation Finished!" -ForegroundColor Green
-Write-Host "Run the sender:   node test.mjs" -ForegroundColor Yellow
-Write-Host "Controls: P = Pause | R = Resume | Q = Quit" -ForegroundColor Yellow
+Write-Host "`n===========================================" -ForegroundColor Cyan
+Write-Host "✅ SETUP COMPLETED SUCCESSFULLY!" -ForegroundColor Green
+Write-Host "===========================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Project ready at: $projectPath" -ForegroundColor White
+Write-Host ""
+Write-Host "To start the sender:" -ForegroundColor Yellow
+Write-Host "   node test.mjs" -ForegroundColor White
+Write-Host ""
+Write-Host "Controls: P = Pause    R = Resume    Q = Quit + Summary" -ForegroundColor Yellow
+Write-Host ""
+
 pause
