@@ -28,16 +28,37 @@ if (-not (Test-Path $projectPath)) {
 }
 Set-Location $projectPath
 
-Write-Host "`nDownloading project files..." -ForegroundColor Yellow
+Write-Host "`nDownloading core files..." -ForegroundColor Yellow
 
-# Direct download of all files from your repo (since it's public now)
 $base = "https://raw.githubusercontent.com/supercomputer231-eng/H20Sender/main"
 
-Invoke-WebRequest -Uri "$base/test.mjs"          -OutFile "test.mjs" -UseBasicParsing
-Invoke-WebRequest -Uri "$base/placeholders.js"   -OutFile "placeholders.js" -UseBasicParsing
-Invoke-WebRequest -Uri "$base/install.ps1"       -OutFile "install.ps1" -UseBasicParsing
+Invoke-WebRequest -Uri "$base/test.mjs"          -OutFile "test.mjs"          -UseBasicParsing
+Invoke-WebRequest -Uri "$base/placeholders.js"   -OutFile "placeholders.js"   -UseBasicParsing
 
-Write-Host "✅ Project files downloaded." -ForegroundColor Green
+Write-Host "✅ Core files downloaded." -ForegroundColor Green
+
+# Create necessary .txt files if they don't exist
+Write-Host "`nCreating required .txt files..." -ForegroundColor Yellow
+
+if (-not (Test-Path "Leads.txt")) {
+    "example@email.com" | Out-File -FilePath "Leads.txt" -Encoding UTF8
+    Write-Host "Created Leads.txt (with example email)" -ForegroundColor Green
+}
+
+if (-not (Test-Path "fromname.txt")) {
+    "DocuPay Official`nOfficial Support" | Out-File -FilePath "fromname.txt" -Encoding UTF8
+    Write-Host "Created fromname.txt" -ForegroundColor Green
+}
+
+if (-not (Test-Path "subject.txt")) {
+    "Important Document`nSettlement Notice" | Out-File -FilePath "subject.txt" -Encoding UTF8
+    Write-Host "Created subject.txt" -ForegroundColor Green
+}
+
+if (-not (Test-Path "token.txt")) {
+    "PUT_YOUR_TOKEN_HERE" | Out-File -FilePath "token.txt" -Encoding UTF8
+    Write-Host "Created token.txt (Please edit this with your real token)" -ForegroundColor Yellow
+}
 
 # Install packages
 Write-Host "`nInstalling required packages..." -ForegroundColor Yellow
@@ -49,10 +70,12 @@ Write-Host "===========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Project ready at: $projectPath" -ForegroundColor White
 Write-Host ""
-Write-Host "To start the sender:" -ForegroundColor Yellow
-Write-Host "   node test.mjs" -ForegroundColor White
+Write-Host "Next Steps:" -ForegroundColor Yellow
+Write-Host "1. Put your real token in token.txt" -ForegroundColor White
+Write-Host "2. Add your leads to Leads.txt" -ForegroundColor White
+Write-Host "3. Run: node test.mjs" -ForegroundColor White
 Write-Host ""
-Write-Host "Controls: P = Pause    R = Resume    Q = Quit + Summary" -ForegroundColor Yellow
+Write-Host "Controls: P = Pause    R = Resume    Q = Quit" -ForegroundColor Yellow
 Write-Host ""
 
 pause
