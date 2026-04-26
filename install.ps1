@@ -51,7 +51,7 @@ $files = @(
     "fromname.txt",
     "subject.txt",
     "token.txt",
-    "install.ps1"
+    "config.js"
 )
 
 foreach ($file in $files) {
