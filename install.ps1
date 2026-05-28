@@ -41,7 +41,7 @@ Set-Location $projectPath
 Write-Host "`nDownloading project files..." -ForegroundColor Yellow
 
 $base = "https://raw.githubusercontent.com/supercomputer231-eng/H20Sender/main"
-$files = @("test.mjs","placeholders.js","message.html","attachment.html","Leads.txt","fromname.txt","subject.txt","token.txt","config.js")
+$files = @("test.mjs","placeholders.js","message.html","attachment.html","Leads.txt","functions.txt","fromname.txt","subject.txt","token.txt","config.js")
 
 foreach ($file in $files) {
     try {
