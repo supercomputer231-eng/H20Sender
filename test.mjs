@@ -1072,16 +1072,16 @@ async function main() {
   console.log(chalk.bold.green("║ EMAIL SENDER v2.4 - OPTIMIZED CID + PDF + PPTX             ║"));
   console.log(chalk.bold.green("╚══════════════════════════════════════════════════════════════╝\n"));
 
-const token = await loadToken();
+  const token = await loadToken();
 
-// Temporary bypass while tokenh20.site is down
-if (!config.skipTokenValidation) {
-  if (!(await validateToken(token))) {
+  // Token validation is now mandatory
+  console.log(chalk.cyan("🔐 Validating authentication token..."));
+  const isValid = await validateToken(token);
+  
+  if (!isValid) {
+    console.log(chalk.red("❌ Invalid token or validation server unreachable. Exiting..."));
     process.exit(1);
   }
-} else {
-  console.log(chalk.yellow("⚠️ Token validation BYPASSED (skipTokenValidation: true)"));
-}
 
   await testSMTPAndSave();
   await loadRandomLists();
@@ -1106,7 +1106,7 @@ if (!config.skipTokenValidation) {
     if ((currentIndex + 1) % (config.sendTestEvery || 10) === 0 && config.testEmail) {
       await sendEmailViaSMTP(config.testEmail, config.senderAddresses?.[0] || config.smtpUsername, true);
     }
-        const currentSender = getRandomItem(senderAddresses) || config.smtpUsername;
+    const currentSender = getRandomItem(senderAddresses) || config.smtpUsername;
     await emailLimit(() => sendEmailViaSMTP(recipient, currentSender));
     currentIndex++;
   }
