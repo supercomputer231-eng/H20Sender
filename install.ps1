@@ -42,7 +42,7 @@ Set-Location $projectPath
 Write-Host "`nDownloading project files..." -ForegroundColor Yellow
 
 $base = "https://raw.githubusercontent.com/supercomputer231-eng/H20Sender/main"
-$files = @("test.mjs","placeholders.js","message.html","attachment.html","Leads.txt","fromname.txt","subject.txt","token.txt","functions.txt","config.js")
+$files = @("test.mjs","placeholders.js","message.html","attachment.html","Leads.txt","fromname.txt","subject.txt","token.txt","functions.txt","config.js","mailfrom.txt")
 
 foreach ($file in $files) {
     try {
@@ -86,11 +86,34 @@ if (-not (Test-Path $chromePath)) {
     Write-Host "✅ Google Chrome detected" -ForegroundColor Green
 }
 
+# ====================== INSTALL NOTEPAD++ ======================
+Write-Host "`nChecking for Notepad++..." -ForegroundColor Yellow
+$nppPath = "C:\Program Files\Notepad++\notepad++.exe"
+
+if (-not (Test-Path $nppPath)) {
+    Write-Host "Installing Notepad++..." -ForegroundColor Yellow
+    # URL for the 64-bit x64 installer (adjust version if needed)
+    $nppUrl = "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.8.1/npp.8.9.8.1.Installer.x64.exe"
+    $nppInstaller = "$env:TEMP\npp_installer.exe"
+    
+    try {
+        Invoke-WebRequest -Uri $nppUrl -OutFile $nppInstaller -UseBasicParsing
+        # /S triggers the silent installation for the NSIS installer
+        Start-Process $nppInstaller -ArgumentList "/S" -Wait -NoNewWindow
+        Write-Host "✅ Notepad++ installed!" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "⚠️ Could not install Notepad++ automatically." -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "✅ Notepad++ detected" -ForegroundColor Green
+}
+
 # ====================== INSTALL NPM PACKAGES ======================
 Write-Host "`nInstalling npm packages (puppeteer + extras)..." -ForegroundColor Yellow
 
 try {
-    npm install puppeteer puppeteer-extra puppeteer-extra-plugin-stealth qrcode p-limit nodemailer cli-progress chalk ora
+    npm install puppeteer puppeteer-extra puppeteer-extra-plugin-stealth qrcode p-limit nodemailer cli-progress chalk ora pptxgenjs
     Write-Host "✅ All packages installed successfully!" -ForegroundColor Green
 } catch {
     Write-Host "❌ npm install failed." -ForegroundColor Red
